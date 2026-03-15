@@ -5,20 +5,52 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.utils import is_bibliothecaire
 
-from .forms import LoanCreateForm, LoanReturnForm
+from .forms import LoanCreateForm, LoanFilterForm, LoanReturnForm
 from .models import Loan
 
 
 @login_required
 def loan_list(request):
-    if is_bibliothecaire(request.user):
+    is_librarian = is_bibliothecaire(request.user)
+    if is_librarian:
         loans = Loan.objects.select_related('book', 'reader').all()
     else:
         loans = Loan.objects.select_related('book', 'reader').filter(reader=request.user)
+
+    filter_form = LoanFilterForm(request.GET or None)
+    if filter_form.is_valid():
+        reader = filter_form.cleaned_data.get('reader')
+        if is_librarian and reader:
+            loans = loans.filter(reader=reader)
+
+        book_title = filter_form.cleaned_data.get('book_title')
+        if book_title:
+            loans = loans.filter(book__title__icontains=book_title)
+
+        loan_date = filter_form.cleaned_data.get('loan_date')
+        if loan_date:
+            loans = loans.filter(loan_date=loan_date)
+
+        return_date = filter_form.cleaned_data.get('return_date')
+        if return_date:
+            loans = loans.filter(return_date=return_date)
+
+        status = filter_form.cleaned_data.get('status')
+        if status:
+            loans = loans.filter(status=status)
+
     paginator = Paginator(loans, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'loans/loan_list.html', {'loans': page_obj, 'page_obj': page_obj})
+
+    query_params = request.GET.copy()
+    query_params.pop('page', None)
+
+    return render(
+        request,
+        'loans/loan_list.html',
+        {'loans': page_obj, 'page_obj': page_obj, 'filter_form': filter_form, 'query_string': query_params.urlencode()},
+    )
 
 
 @login_required

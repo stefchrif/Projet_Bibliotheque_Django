@@ -55,3 +55,57 @@ class LoanViewPaginationTests(TestCase):
         self.client.login(username='reader2', password='pass12345')
         response = self.client.get(reverse('loans:loan-list'))
         self.assertTrue(response.context['page_obj'].paginator.num_pages >= 2)
+
+
+class LoanFilterTests(TestCase):
+    def setUp(self):
+        category = Category.objects.create(name='Roman')
+        self.reader1 = User.objects.create_user(username='testreader1', password='pass12345')
+        self.reader2 = User.objects.create_user(username='testreader2', password='pass12345')
+        self.librarian = User.objects.create_user(username='biblio', password='pass12345')
+
+        UserProfile.objects.filter(user=self.reader1).update(role='lecteur')
+        UserProfile.objects.filter(user=self.reader2).update(role='lecteur')
+        UserProfile.objects.filter(user=self.librarian).update(role='bibliothecaire')
+
+        book1 = Book.objects.create(
+            title='Livre Atlas', author='Auteur A', isbn='7000000000001', category=category, total_copies=2, available_copies=1
+        )
+        book2 = Book.objects.create(
+            title='Livre Rif', author='Auteur B', isbn='7000000000002', category=category, total_copies=2, available_copies=2
+        )
+
+        Loan.objects.create(
+            book=book1,
+            reader=self.reader1,
+            loan_date=timezone.datetime(2026, 3, 10).date(),
+            due_date=timezone.datetime(2026, 3, 15).date(),
+            status=Loan.STATUS_EN_COURS,
+        )
+        Loan.objects.create(
+            book=book2,
+            reader=self.reader2,
+            loan_date=timezone.datetime(2026, 3, 9).date(),
+            due_date=timezone.datetime(2026, 3, 14).date(),
+            return_date=timezone.datetime(2026, 3, 11).date(),
+            status=Loan.STATUS_RETOURNE,
+        )
+
+    def test_librarian_can_filter_by_status(self):
+        self.client.login(username='biblio', password='pass12345')
+        response = self.client.get(reverse('loans:loan-list'), {'status': Loan.STATUS_RETOURNE})
+        loans = response.context['loans']
+        self.assertEqual(loans.paginator.count, 1)
+        self.assertContains(response, 'Livre Rif')
+
+    def test_librarian_can_filter_by_reader(self):
+        self.client.login(username='biblio', password='pass12345')
+        response = self.client.get(reverse('loans:loan-list'), {'reader': self.reader1.id})
+        self.assertContains(response, 'Livre Atlas')
+        self.assertNotContains(response, 'Livre Rif')
+
+    def test_reader_cannot_see_others_even_with_reader_filter(self):
+        self.client.login(username='testreader1', password='pass12345')
+        response = self.client.get(reverse('loans:loan-list'), {'reader': self.reader2.id})
+        self.assertContains(response, 'Livre Atlas')
+        self.assertNotContains(response, 'Livre Rif')

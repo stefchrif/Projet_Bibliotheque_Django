@@ -18,3 +18,15 @@ class LoanCreateForm(forms.ModelForm):
 
 class LoanReturnForm(forms.Form):
     confirm = forms.BooleanField(label='Confirmer le retour')
+
+
+class LoanFilterForm(forms.Form):
+    reader = forms.ModelChoiceField(queryset=User.objects.all(), required=False, label='Lecteur')
+    book_title = forms.CharField(required=False, label='Nom du livre')
+    loan_date = forms.DateField(required=False, label='Date emprunt', widget=forms.DateInput(attrs={'type': 'date'}))
+    return_date = forms.DateField(required=False, label='Date retour', widget=forms.DateInput(attrs={'type': 'date'}))
+    status = forms.ChoiceField(
+        required=False,
+        label='Statut',
+        choices=[('', 'Tous')] + Loan.STATUS_CHOICES,
+    )

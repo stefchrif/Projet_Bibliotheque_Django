@@ -6,6 +6,7 @@
 - CRUD complet des livres.
 - Gestion des catégories de livres.
 - Gestion des emprunts et retours.
+- Filtres avancés sur les emprunts (lecteur, livre, date emprunt, date retour, statut).
 - Recherche avancée des livres (titre, auteur, catégorie, disponibilité).
 - Pagination activée sur les tableaux (livres, emprunts, catégories) et sur les listes admin.
 
