@@ -1,15 +1,9 @@
-import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev-secret-key-change-me')
-DEBUG = os.getenv('DJANGO_DEBUG', 'true').lower() == 'true'
-
-raw_hosts = os.getenv('DJANGO_ALLOWED_HOSTS', '')
-ALLOWED_HOSTS = [host.strip() for host in raw_hosts.split(',') if host.strip()]
-if DEBUG and not ALLOWED_HOSTS:
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+SECRET_KEY = 'dev-secret-key-change-me'
+DEBUG = True
+ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -72,9 +66,8 @@ TIME_ZONE = 'Europe/Paris'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'books:book-list'
