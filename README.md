@@ -94,3 +94,12 @@ Si ton serveur affiche encore une 405, fais:
 1. `git pull`
 2. redémarre le service applicatif (Gunicorn/uWSGI)
 3. vide le cache navigateur puis reteste.
+
+
+## Gestion du rôle bibliothécaire dans l'admin
+Le rôle n'apparaît pas directement dans le formulaire standard `Utilisateurs` de Django tant qu'on n'ajoute pas le profil.
+Le projet inclut maintenant:
+- un écran dédié `User profiles` dans l'admin,
+- et un encart `Profil` sur la page d'édition d'un utilisateur (après création) pour choisir `Lecteur` ou `Bibliothécaire`.
+
+⚠️ Sur l'écran "Ajouter un utilisateur", Django crée d'abord l'utilisateur (username + mot de passe), puis tu cliques sur l'utilisateur créé pour définir le rôle dans `Profil`.
