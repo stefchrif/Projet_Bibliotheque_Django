@@ -7,3 +7,4 @@ from .models import Loan
 class LoanAdmin(admin.ModelAdmin):
     list_display = ('book', 'reader', 'loan_date', 'due_date', 'status')
     list_filter = ('status',)
+    list_per_page = 20

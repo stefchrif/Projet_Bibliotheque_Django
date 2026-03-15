@@ -7,6 +7,7 @@
 - Gestion des catégories de livres.
 - Gestion des emprunts et retours.
 - Recherche avancée des livres (titre, auteur, catégorie, disponibilité).
+- Pagination activée sur les tableaux (livres, emprunts, catégories) et sur les listes admin.
 
 ## Stack
 - Django 5.x

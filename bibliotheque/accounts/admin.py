@@ -15,6 +15,7 @@ class UserProfileInline(admin.StackedInline):
 
 class UserAdmin(BaseUserAdmin):
     inlines = (UserProfileInline,)
+    list_per_page = 20
 
     def get_inline_instances(self, request, obj=None):
         if not obj:
@@ -27,6 +28,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'role')
     list_filter = ('role',)
     search_fields = ('user__username', 'user__first_name', 'user__last_name', 'user__email')
+    list_per_page = 20
 
 
 admin.site.unregister(User)

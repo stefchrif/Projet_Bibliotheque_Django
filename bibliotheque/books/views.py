@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db.models import Q
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.utils import is_bibliothecaire
@@ -25,7 +25,15 @@ def book_list(request):
         elif available is False:
             books = books.filter(available_copies=0)
 
-    return render(request, 'books/book_list.html', {'books': books, 'search_form': form})
+    paginator = Paginator(books, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(
+        request,
+        'books/book_list.html',
+        {'books': page_obj, 'search_form': form, 'page_obj': page_obj},
+    )
 
 
 @login_required
@@ -67,4 +75,12 @@ def category_list(request):
     if form.is_valid():
         form.save()
         return redirect('books:category-list')
-    return render(request, 'books/category_list.html', {'categories': categories, 'form': form})
+    paginator = Paginator(categories, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(
+        request,
+        'books/category_list.html',
+        {'categories': page_obj, 'form': form, 'page_obj': page_obj},
+    )
