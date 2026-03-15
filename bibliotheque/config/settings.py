@@ -1,4 +1,5 @@
 from pathlib import Path
+STATIC_ROOT = BASE_DIR.parent / 'public' / 'static'
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'dev-secret-key-change-me'
@@ -68,6 +69,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR.parent / 'public' / 'static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'books:book-list'
