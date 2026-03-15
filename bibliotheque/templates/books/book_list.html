@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Catalogue des livres</h1>
+<form method="get" class="row g-2 mb-3 card p-3">
+  <div class="col-md-3">{{ search_form.title.label_tag }} {{ search_form.title }}</div>
+  <div class="col-md-3">{{ search_form.author.label_tag }} {{ search_form.author }}</div>
+  <div class="col-md-3">{{ search_form.category.label_tag }} {{ search_form.category }}</div>
+  <div class="col-md-2">{{ search_form.available.label_tag }} {{ search_form.available }}</div>
+  <div class="col-md-1"> 
+    <label for="id_sort">Tri</label>
+    <select id="id_sort" name="sort" class="form-select">
+      <option value="title" {% if selected_sort == 'title' %}selected{% endif %}>Titre A→Z</option>
+      <option value="-title" {% if selected_sort == '-title' %}selected{% endif %}>Titre Z→A</option>
+      <option value="author" {% if selected_sort == 'author' %}selected{% endif %}>Auteur A→Z</option>
+      <option value="-author" {% if selected_sort == '-author' %}selected{% endif %}>Auteur Z→A</option>
+      <option value="available" {% if selected_sort == 'available' %}selected{% endif %}>Disponibilité</option>
+    </select>
+  </div>
+  <div class="col-md-12 mt-2">
+    <button class="btn btn-primary">Filtrer</button>
+    {% if user.profile.role == 'bibliothecaire' %}
+      <a class="btn btn-outline-success" href="{% url 'books:book-export-csv' %}?title={{ request.GET.title|default:'' }}&author={{ request.GET.author|default:'' }}&category={{ request.GET.category|default:'' }}&available={{ request.GET.available|default:'' }}">Exporter CSV</a>
+    {% endif %}
+  </div>
+</form>
+<table class="table table-striped">
+  <thead><tr><th>Titre</th><th>Auteur</th><th>ISBN</th><th>Catégorie</th><th>Disponibilité</th><th>Actions</th></tr></thead>
+  <tbody>
+  {% for book in books %}
+    <tr>
+      <td>{{ book.title }}</td><td>{{ book.author }}</td><td>{{ book.isbn }}</td><td>{{ book.category.name }}</td>
+      <td>{% if book.is_available %}<span class="badge bg-success">Disponible ({{ book.available_copies }})</span>{% else %}<span class="badge bg-danger">Indisponible</span>{% endif %}</td>
+      <td>
+        {% if user.profile.role == 'bibliothecaire' %}
+          <a href="{% url 'books:book-update' book.pk %}" class="btn btn-sm btn-outline-primary">Modifier</a>
+          <a href="{% url 'books:book-delete' book.pk %}" class="btn btn-sm btn-outline-danger">Supprimer</a>
+        {% endif %}
+      </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="6">Aucun livre trouvé.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<nav aria-label="Pagination livres">
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page=1&title={{ request.GET.title|default:'' }}&author={{ request.GET.author|default:'' }}&category={{ request.GET.category|default:'' }}&available={{ request.GET.available|default:'' }}&sort={{ selected_sort|default:'title' }}">« Première</a></li>
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&title={{ request.GET.title|default:'' }}&author={{ request.GET.author|default:'' }}&category={{ request.GET.category|default:'' }}&available={{ request.GET.available|default:'' }}&sort={{ selected_sort|default:'title' }}">Précédente</a></li>
+    {% endif %}
+    <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+    {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&title={{ request.GET.title|default:'' }}&author={{ request.GET.author|default:'' }}&category={{ request.GET.category|default:'' }}&available={{ request.GET.available|default:'' }}&sort={{ selected_sort|default:'title' }}">Suivante</a></li>
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&title={{ request.GET.title|default:'' }}&author={{ request.GET.author|default:'' }}&category={{ request.GET.category|default:'' }}&available={{ request.GET.available|default:'' }}&sort={{ selected_sort|default:'title' }}">Dernière »</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}
