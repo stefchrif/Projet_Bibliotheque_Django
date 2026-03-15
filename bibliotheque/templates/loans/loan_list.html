@@ -11,9 +11,13 @@
     <div class="col-md-2">{{ filter_form.loan_date.label_tag }} {{ filter_form.loan_date }}</div>
     <div class="col-md-2">{{ filter_form.return_date.label_tag }} {{ filter_form.return_date }}</div>
     <div class="col-md-2">{{ filter_form.status.label_tag }} {{ filter_form.status }}</div>
+    <div class="col-md-2">{{ filter_form.overdue_only.label_tag }} {{ filter_form.overdue_only }}</div>
     <div class="col-md-12 mt-2">
       <button class="btn btn-primary" type="submit">Filtrer</button>
       <a href="{% url 'loans:loan-list' %}" class="btn btn-secondary">Réinitialiser</a>
+      {% if user.profile.role == 'bibliothecaire' %}
+      <a href="{% url 'loans:loan-export-csv' %}?{{ query_string }}" class="btn btn-outline-success">Exporter CSV</a>
+      {% endif %}
     </div>
   </div>
 </form>
@@ -28,7 +32,15 @@
         <td>{{ loan.loan_date }}</td>
         <td>{{ loan.due_date }}</td>
         <td>{{ loan.return_date|default:'-' }}</td>
-        <td>{{ loan.get_status_display }}</td>
+        <td>
+          {% if loan.status == 'retourne' %}
+            <span class="badge bg-success">Retourné</span>
+          {% elif loan.due_date < today %}
+            <span class="badge bg-danger">En retard</span>
+          {% else %}
+            <span class="badge bg-warning text-dark">En cours</span>
+          {% endif %}
+        </td>
         <td>
           {% if user.profile.role == 'bibliothecaire' and loan.status == 'en_cours' %}
             <a href="{% url 'loans:loan-return' loan.pk %}" class="btn btn-sm btn-success">Valider retour</a>

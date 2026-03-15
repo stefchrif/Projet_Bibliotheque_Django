@@ -9,6 +9,9 @@
 - Filtres avancés sur les emprunts (lecteur, livre, date emprunt, date retour, statut).
 - Recherche avancée des livres (titre, auteur, catégorie, disponibilité).
 - Pagination activée sur les tableaux (livres, emprunts, catégories) et sur les listes admin.
+- Gestion visuelle des retards (badge + filtre dédié).
+- Export CSV du catalogue et des emprunts (côté bibliothécaire).
+- Tableau de bord bibliothécaire avec statistiques (livres, lecteurs, emprunts, retards, top livres).
 
 ## Stack
 - Django 5.x

@@ -109,3 +109,37 @@ class LoanFilterTests(TestCase):
         response = self.client.get(reverse('loans:loan-list'), {'reader': self.reader2.id})
         self.assertContains(response, 'Livre Atlas')
         self.assertNotContains(response, 'Livre Rif')
+
+
+class DashboardAndExportTests(TestCase):
+    def setUp(self):
+        category = Category.objects.create(name='Dash')
+        self.librarian = User.objects.create_user(username='dashbiblio', password='pass12345')
+        UserProfile.objects.filter(user=self.librarian).update(role='bibliothecaire')
+        self.reader = User.objects.create_user(username='dashreader', password='pass12345')
+        UserProfile.objects.filter(user=self.reader).update(role='lecteur')
+
+        overdue_book = Book.objects.create(title='Overdue Book', author='A', isbn='7010000000001', category=category, total_copies=1, available_copies=0)
+        returned_book = Book.objects.create(title='Returned Book', author='B', isbn='7010000000002', category=category, total_copies=1, available_copies=1)
+
+        Loan.objects.create(book=overdue_book, reader=self.reader, loan_date=timezone.datetime(2026,3,1).date(), due_date=timezone.datetime(2026,3,2).date(), status=Loan.STATUS_EN_COURS)
+        Loan.objects.create(book=returned_book, reader=self.reader, loan_date=timezone.datetime(2026,3,3).date(), due_date=timezone.datetime(2026,3,4).date(), return_date=timezone.datetime(2026,3,4).date(), status=Loan.STATUS_RETOURNE)
+
+    def test_dashboard_access_and_stats(self):
+        self.client.login(username='dashbiblio', password='pass12345')
+        response = self.client.get(reverse('loans:dashboard'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Tableau de bord Bibliothèque')
+
+    def test_loan_export_csv(self):
+        self.client.login(username='dashbiblio', password='pass12345')
+        response = self.client.get(reverse('loans:loan-export-csv'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/csv')
+        self.assertIn('Overdue Book', response.content.decode('utf-8'))
+
+    def test_overdue_only_filter(self):
+        self.client.login(username='dashbiblio', password='pass12345')
+        response = self.client.get(reverse('loans:loan-list'), {'overdue_only': 'on'})
+        self.assertContains(response, 'Overdue Book')
+        self.assertNotContains(response, 'Returned Book')

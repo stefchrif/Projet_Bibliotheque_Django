@@ -30,3 +30,5 @@ class LoanFilterForm(forms.Form):
         label='Statut',
         choices=[('', 'Tous')] + Loan.STATUS_CHOICES,
     )
+
+    overdue_only = forms.BooleanField(required=False, label='Retards uniquement')

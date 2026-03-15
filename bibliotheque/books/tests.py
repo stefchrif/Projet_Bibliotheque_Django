@@ -55,3 +55,18 @@ class SeedCommandTests(TestCase):
 
         reader = User.objects.get(username='test1')
         self.assertTrue(reader.check_password('t123456'))
+
+
+class BookExportTests(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(name='Export')
+        self.book = Book.objects.create(title='Livre Export', author='Auteur Export', isbn='7020000000001', category=self.category, total_copies=2, available_copies=2)
+        self.librarian = User.objects.create_user(username='exportbiblio', password='pass12345')
+        UserProfile.objects.filter(user=self.librarian).update(role='bibliothecaire')
+
+    def test_book_export_csv_for_librarian(self):
+        self.client.login(username='exportbiblio', password='pass12345')
+        response = self.client.get(reverse('books:book-export-csv'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/csv')
+        self.assertIn('Livre Export', response.content.decode('utf-8'))

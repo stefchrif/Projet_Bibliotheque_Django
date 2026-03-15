@@ -19,6 +19,7 @@
         {% if user.profile.role == 'bibliothecaire' %}
           <a class="btn btn-light btn-sm" href="{% url 'books:book-create' %}">Ajouter livre</a>
           <a class="btn btn-light btn-sm" href="{% url 'loans:loan-create' %}">Nouvel emprunt</a>
+          <a class="btn btn-light btn-sm" href="{% url 'loans:dashboard' %}">Tableau de bord</a>
           <a class="btn btn-light btn-sm" href="{% url 'books:category-list' %}">Catégories</a>
         {% endif %}
         <form method="post" action="{% url 'logout' %}" class="d-inline">
