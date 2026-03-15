@@ -106,3 +106,25 @@ Le projet inclut maintenant:
 - et un encart `Profil` sur la page d'édition d'un utilisateur (après création) pour choisir `Lecteur` ou `Bibliothécaire`.
 
 ⚠️ Sur l'écran "Ajouter un utilisateur", Django crée d'abord l'utilisateur (username + mot de passe), puis tu cliques sur l'utilisateur créé pour définir le rôle dans `Profil`.
+
+
+## Données de démonstration (seed manuel)
+Tu peux peupler automatiquement la base avec des données de test marocaines via:
+
+```bash
+cd bibliotheque
+python manage.py seed_bibliotheque
+```
+
+Cette commande crée:
+- environ 50 livres (auteurs/titres marocains),
+- des catégories,
+- des lecteurs `test1`, `test2`, `test3`, ...
+- des bibliothécaires `biblio1`, `biblio2`, ...
+- un mot de passe commun: `t123456`,
+- des emprunts de démo (par défaut 100) avec dates entre le `01/03/2026` et le `15/03/2026`.
+
+Options utiles:
+```bash
+python manage.py seed_bibliotheque --books 50 --test-users 10 --librarians 2 --loans 100
+```

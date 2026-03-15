@@ -1,9 +1,11 @@
 from django.contrib.auth.models import User
+from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
 
 from accounts.models import UserProfile
 from books.models import Book, Category
+from loans.models import Loan
 
 
 class BookViewsTests(TestCase):
@@ -39,3 +41,17 @@ class BookViewsTests(TestCase):
             )
         response = self.client.get(reverse('books:book-list'))
         self.assertTrue(response.context['page_obj'].paginator.num_pages >= 2)
+
+
+class SeedCommandTests(TestCase):
+    def test_seed_command_creates_demo_data(self):
+        call_command('seed_bibliotheque', books=10, test_users=3, librarians=2, loans=12)
+
+        self.assertGreaterEqual(Category.objects.count(), 1)
+        self.assertGreaterEqual(Book.objects.count(), 10)
+        self.assertTrue(User.objects.filter(username='test1').exists())
+        self.assertTrue(User.objects.filter(username='biblio1').exists())
+        self.assertGreaterEqual(Loan.objects.count(), 1)
+
+        reader = User.objects.get(username='test1')
+        self.assertTrue(reader.check_password('t123456'))
