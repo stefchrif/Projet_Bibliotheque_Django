@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.shortcuts import redirect, render
 
 from .forms import ReaderSignupForm
@@ -20,3 +20,9 @@ def signup_view(request):
         form = ReaderSignupForm()
 
     return render(request, 'accounts/signup.html', {'form': form})
+
+
+def logout_view(request):
+    if request.method in {'GET', 'POST'}:
+        logout(request)
+    return redirect('login')

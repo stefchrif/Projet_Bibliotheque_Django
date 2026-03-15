@@ -90,6 +90,8 @@ Si tu as toujours une 404 après mise à jour, redémarre le service applicatif.
 Depuis les versions récentes de Django, la déconnexion via la vue intégrée nécessite une requête **POST** (et non GET).
 Le bouton "Déconnexion" du projet envoie maintenant un formulaire POST avec token CSRF.
 
+Note: une route explicite `/accounts/logout/` (et `/comptes/logout/`) a aussi été ajoutée pour accepter GET et POST afin d'éviter les erreurs 405 selon les environnements.
+
 Si ton serveur affiche encore une 405, fais:
 1. `git pull`
 2. redémarre le service applicatif (Gunicorn/uWSGI)
