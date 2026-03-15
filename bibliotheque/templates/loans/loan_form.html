@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Nouvel emprunt</h1>
+<form method="post" class="card p-3">{% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn btn-primary">Enregistrer</button>
+</form>
+{% endblock %}
