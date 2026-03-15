@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Retour du livre</h1>
+<p>Livre: <strong>{{ loan.book.title }}</strong> / Lecteur: <strong>{{ loan.reader.username }}</strong></p>
+<form method="post" class="card p-3">{% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn btn-success">Confirmer retour</button>
+</form>
+{% endblock %}
