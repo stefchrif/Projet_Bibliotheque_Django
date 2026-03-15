@@ -3,6 +3,7 @@
 ## Fonctionnalités
 - Authentification des utilisateurs (connexion, déconnexion, inscription lecteur).
 - Gestion des rôles : lecteur et bibliothécaire.
+- Redirection post-connexion intelligente: bibliothécaire -> tableau de bord (si pas de `next`), lecteur -> catalogue.
 - CRUD complet des livres.
 - Gestion des catégories de livres.
 - Gestion des emprunts et retours.
