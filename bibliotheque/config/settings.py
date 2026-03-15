@@ -2,14 +2,13 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev-secret-key-change-me')
 DEBUG = os.getenv('DJANGO_DEBUG', 'true').lower() == 'true'
 
 raw_hosts = os.getenv('DJANGO_ALLOWED_HOSTS', '')
 ALLOWED_HOSTS = [host.strip() for host in raw_hosts.split(',') if host.strip()]
 if DEBUG and not ALLOWED_HOSTS:
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'biblio.stefdevelopment.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
