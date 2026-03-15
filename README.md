@@ -84,3 +84,13 @@ Le projet utilise l'URL française `/comptes/login/` pour l'authentification.
 Pour compatibilité avec des liens par défaut Django (ou anciens liens), un alias `/accounts/login/` est aussi actif dans les URLs.
 
 Si tu as toujours une 404 après mise à jour, redémarre le service applicatif.
+
+
+## Erreur 405 sur `/accounts/logout/`
+Depuis les versions récentes de Django, la déconnexion via la vue intégrée nécessite une requête **POST** (et non GET).
+Le bouton "Déconnexion" du projet envoie maintenant un formulaire POST avec token CSRF.
+
+Si ton serveur affiche encore une 405, fais:
+1. `git pull`
+2. redémarre le service applicatif (Gunicorn/uWSGI)
+3. vide le cache navigateur puis reteste.

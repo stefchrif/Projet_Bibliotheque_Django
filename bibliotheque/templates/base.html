@@ -21,7 +21,10 @@
           <a class="btn btn-light btn-sm" href="{% url 'loans:loan-create' %}">Nouvel emprunt</a>
           <a class="btn btn-light btn-sm" href="{% url 'books:category-list' %}">Catégories</a>
         {% endif %}
-        <a class="btn btn-warning btn-sm" href="{% url 'logout' %}">Déconnexion</a>
+        <form method="post" action="{% url 'logout' %}" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-warning btn-sm">Déconnexion</button>
+        </form>
       {% else %}
         <a class="btn btn-light btn-sm" href="{% url 'login' %}">Connexion</a>
         <a class="btn btn-warning btn-sm" href="{% url 'accounts:signup' %}">Inscription</a>
