@@ -77,3 +77,10 @@ python manage.py collectstatic --noinput
 3. Redémarrer le service web (Gunicorn/uWSGI/etc.).
 
 Avec la configuration actuelle, WhiteNoise peut servir automatiquement les statics en production si ton reverse proxy ne les sert pas directement.
+
+
+## Erreur 404 sur `/accounts/login/`
+Le projet utilise l'URL française `/comptes/login/` pour l'authentification.
+Pour compatibilité avec des liens par défaut Django (ou anciens liens), un alias `/accounts/login/` est aussi actif dans les URLs.
+
+Si tu as toujours une 404 après mise à jour, redémarre le service applicatif.
